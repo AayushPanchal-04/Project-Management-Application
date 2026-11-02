@@ -1,0 +1,7 @@
+node_modules
+dist
+
+# Environment files contain secrets (Clerk secret key, database URL, API keys)
+.env
+.env.local
+.env.*.local
