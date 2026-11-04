@@ -27,7 +27,7 @@ function WorkspaceDropdown() {
         setActive({ organization: workspaceId });
         dispatch(setCurrentWorkspace(workspaceId))
         setIsOpen(false);
-        navigate('/')
+        navigate('/dashboard')
     }
 
     const onDeleteWorkspace = async (e, workspace) => {

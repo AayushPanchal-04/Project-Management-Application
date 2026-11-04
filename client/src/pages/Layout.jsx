@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
-import { Outlet } from 'react-router-dom'
-import { CreateOrganization, SignIn, useAuth, useUser, useOrganizationList } from '@clerk/clerk-react'
+import { Navigate, Outlet } from 'react-router-dom'
+import { CreateOrganization, useAuth, useUser, useOrganizationList } from '@clerk/clerk-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchWorkspaces } from '../features/workspaceSlice'
 import { loadTheme } from '../features/themeSlice'
@@ -37,12 +37,18 @@ const Layout = () => {
         return () => { cancelled = true }
     }, [user?.id, isLoaded, orgsLoaded, organizationCount])
 
-    if (!user) {
+    // Wait for Clerk before deciding anything, otherwise the shell would
+    // briefly render while the session is still loading.
+    if (!isLoaded) {
         return (
-            <div className="flex justify-center items-center h-screen bg-white dark:bg-zinc-950">
-                <SignIn />
+            <div className='flex items-center justify-center h-screen bg-white dark:bg-zinc-950'>
+                <Loader2Icon className="size-7 text-blue-500 animate-spin" />
             </div>
         )
+    }
+
+    if (!user) {
+        return <Navigate to="/signin" replace />
     }
 
     if (!ready) {
@@ -56,7 +62,7 @@ const Layout = () => {
     if (workspaces.length === 0) {
         return (
             <div className="min-h-screen flex justify-center items-center bg-white dark:bg-zinc-950">
-                <CreateOrganization afterCreateOrganizationUrl="/" />
+                <CreateOrganization afterCreateOrganizationUrl="/dashboard" />
             </div>
         )
     }
